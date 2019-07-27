@@ -92,15 +92,14 @@ class Friends(Chara):
         self.rect = Rect(self.img.get_rect(center = friend_pos[laneNum]))
         self.Cost = cost
         self.friendly = True
+        self.rangeRect = Rect(self.rect.midright, (range, 5))
 
     def update(self, screen): 
         super().update(screen)
         #戦闘状態へ移行
+        enemy_list = enemyGroup.sprites()
         for enemy in enemy_list:
-            (x, y) = self.rect.midright
-            x += self.RNG
-            (enemyX, enemyY) = enemy.rect.center
-            if self.rect.right <= enemyX and enemyX <= x and y == enemyY:
+            if self.rangeRect.colliderect(enemy.rect) == True and self.rect.centery == enemy.rect.centery:
                 if self.stat != battle:
                     self.changeStat(battle)
                 else:
@@ -115,15 +114,14 @@ class Enemy(Chara):
         super().__init__(hitpoint, attack, speed, range, chara_type)
         self.rect = Rect(self.img.get_rect(center = enemy_pos[random.randint(0,4)]))
         self.friendly = False
+        self.rangeRect = Rect(self.rect.left + range, self.rect.centery, -(range), 5)
 
     def update(self, screen): 
         super().update(screen)
         #戦闘状態へ移行
+        friend_list = friendGroup.sprites()
         for friend in friend_list:
-            (ex, ey) = self.rect.midleft
-            ex += self.RNG
-            (friendX, friendY) = friend.rect.center
-            if self.rect.right >= friendX and friendX >= ex and ey == friendY:
+            if self.rangeRect.colliderect(friend.rect) == True and self.rect.centery == friend.rect.centery:
                 if self.stat != battle:
                     self.changeStat(battle)
                 else:
@@ -156,7 +154,6 @@ def MakeFriend(laneNumber):
         newFriend = Friends(8, 1, 2, 10, ia, laneNumber, 2)
     spriteGroup.add(newFriend)
     friendGroup.add(newFriend)
-    friend_list = friendGroup.sprites()
     return newFriend
 
 #てきつくる
@@ -170,6 +167,5 @@ def MakeEnemy():
         newEnemy = Enemy(2, 2, 1, -500, fkt3)
     spriteGroup.add(newEnemy)
     enemyGroup.add(newEnemy)
-    enemy_list = enemyGroup.sprites()
     print('enemy')
     return newEnemy
