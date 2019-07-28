@@ -47,6 +47,7 @@ class Chara(pygame.sprite.Sprite):
             self.kill()
         elif self.stat == alive:
             self.draw(screen)
+            #移動
             if self.friendly == True:
                 self.rect.move_ip(self.SPD, 0)
                 self.rangeRect.move_ip(self.SPD, 0)
@@ -88,7 +89,6 @@ class Chara(pygame.sprite.Sprite):
             print(self.charaType, 'attacked!!!!!!!')
             if enemy.HP <= 0:
                 enemy.changeStat(notExist)
-                self.changeStat(alive)
             self.battleTime = 0
 
 #みかた
@@ -107,21 +107,16 @@ class Friends(Chara):
         enemy_list = enemyGroup.sprites()
         friend_list = friendGroup.sprites()
         """
+        battleFlag = False
         for enemy in enemyGroup:
             #味方→敵への攻撃系統
             if self.rangeRect.colliderect(enemy.rect) == True and self.rect.centery == enemy.rect.centery:
+                battleFlag = True
                 if self.stat != battle:
                     self.changeStat(battle)
                 else:
                     self.Attack(enemy)
-            #敵→味方への攻撃系統
-            if enemy.rangeRect.colliderect(self.rect) == True and self.rect.centery == enemy.rect.centery:
-                if enemy.stat != battle:
-                    enemy.changeStat(battle)
-                else:
-                    enemy.Attack(self)
-        if pygame.sprite.spritecollideany(self, enemyGroup) == False:
-            print('teki is inai')
+        if battleFlag == False:
             self.changeStat(alive)
 
 
@@ -137,19 +132,16 @@ class Enemy(Chara):
     def update(self, screen): 
         super().update(screen)
         #戦闘状態へ移行
-        """
-        friend_list = friendGroup.sprites()
-        for friend in friend_list:
+        battleFlag = False
+        for friend in friendGroup:
+            #味方→敵への攻撃系統
             if self.rangeRect.colliderect(friend.rect) == True and self.rect.centery == friend.rect.centery:
+                battleFlag = True
                 if self.stat != battle:
                     self.changeStat(battle)
                 else:
                     self.Attack(friend)
-            elif self.stat == battle:
-                self.changeStat(alive)
-        """
-        if pygame.sprite.spritecollideany(self, friendGroup) == False:
-            print('friend inai')
+        if battleFlag == False:
             self.changeStat(alive)
 
 
