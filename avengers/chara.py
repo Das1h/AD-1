@@ -103,9 +103,11 @@ class Friends(Chara):
     def update(self, screen): 
         super().update(screen)
         #戦闘状態へ移行
+        """
         enemy_list = enemyGroup.sprites()
         friend_list = friendGroup.sprites()
-        for enemy in enemy_list:
+        """
+        for enemy in enemyGroup:
             #味方→敵への攻撃系統
             if self.rangeRect.colliderect(enemy.rect) == True and self.rect.centery == enemy.rect.centery:
                 if self.stat != battle:
@@ -121,7 +123,6 @@ class Friends(Chara):
         if pygame.sprite.spritecollideany(self, enemyGroup) == False:
             print('teki is inai')
             self.changeStat(alive)
-
 
 
 #てき
@@ -145,7 +146,8 @@ class Enemy(Chara):
                 else:
                     self.Attack(friend)
             elif self.stat == battle:
-                self.changeStat(alive)"""
+                self.changeStat(alive)
+        """
         if pygame.sprite.spritecollideany(self, friendGroup) == False:
             print('friend inai')
             self.changeStat(alive)
