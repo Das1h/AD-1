@@ -96,14 +96,16 @@ class Chara(pygame.sprite.Sprite):
             self.battleTime = 0
 
 
+#コスト
+MyCost = 10
 #みかた
 class Friends(Chara):
     def __init__(self, hitpoint, attack, speed, range, chara_type, imageList, laneNum, cost):
         super().__init__(hitpoint, attack, speed, range, chara_type, imageList)
         self.rect = Rect(self.img.get_rect(center = friend_pos[laneNum]))
-        self.Cost = cost
         self.friendly = True
         self.rangeRect = Rect(self.rect.center, (range, 5))
+        self.Cost = cost
 
     def update(self, screen): 
         super().update(screen)
@@ -183,12 +185,14 @@ enemy_pos = [(1870,550), (1870,649), (1870,748), (1870,847), (1870,946)]
 #chara---(HP, ATK, SPD, range, type, lane, cost)
 #生徒つくる
 def MakeFriend(laneNumber, imageList):
+    global MyCost
     if Displays.nowPressed == cs:
         newFriend = Friends(4, 4, 1, 800, cs, imageList, laneNumber, 3)
     elif Displays.nowPressed == bi:
         newFriend = Friends(10, 3, 4, 50, bi, imageList, laneNumber, 1)
     elif Displays.nowPressed == ia:
         newFriend = Friends(18, 1, 2, 85, ia, imageList, laneNumber, 2)
+    MyCost -= newFriend.Cost
     spriteGroup.add(newFriend)
     friendGroup.add(newFriend)
     return newFriend
@@ -206,6 +210,7 @@ def MakeEnemy(imageList):
     enemyGroup.add(newEnemy)
     return newEnemy
 
+#拠点色々
 class Base():
     def __init__(self):
         self.hitpoint = 100

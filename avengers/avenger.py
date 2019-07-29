@@ -31,6 +31,9 @@ def main():
                 "fkt3_battle":pygame.image.load('./chara/fkt3_battle.png').convert_alpha(),
                 "som3":pygame.image.load('./chara/som3.png').convert_alpha(),
                 "som3_battle":pygame.image.load('./chara/som3_battle.png').convert_alpha()}
+
+    #コスト
+    costList = {'cs':3, 'ia':2, 'bi':1}
     
     #拠点
     baseImage = pygame.image.load('./img/base.png').convert_alpha()
@@ -40,9 +43,14 @@ def main():
     hpImage = pygame.image.load("./img/hitpoint.png").convert()
     hitpoint = Displays.HPbar(hpImage)
 
-    #タイマー
+    #テキスト表示用のfont    
     sysfont = pygame.font.SysFont(None, 70)
-    timeLimit = 121
+
+    #タイマー
+    timer = 60
+
+    #1000ms毎にイベント
+    pygame.time.set_timer(USEREVENT, 1000)
 
     while (1):
         clock.tick(60)      #FPS
@@ -72,7 +80,6 @@ def main():
         screen.blit(hpImage, hitpoint.rect)
 
         #タイマー表示
-        timer = timeLimit - int(pygame.time.get_ticks() / 1000)
         timerText = sysfont.render('Timelimit: ' + str(timer) + 'sec.', True, (255,255,255), (0,0,0))
         timerRect = timerText.get_rect(topleft = (50, 200))
         screen.blit(timerText, timerRect)
@@ -80,6 +87,11 @@ def main():
             print('GAME CLEAR')
             pygame.quit()
             sys.exit()
+
+        #コスト表示
+        costText = sysfont.render('COST: ' + str(chara.MyCost), True, (255,255,255), (0,0,0))
+        costRect = costText.get_rect(topleft = (500, 200))
+        screen.blit(costText, costRect)
 
         #イベント処理
         for event in pygame.event.get():
@@ -95,28 +107,34 @@ def main():
                     sys.exit()
                 if event.key == K_e:
                     chara.MakeEnemy(imgList).changeStat(chara.alive)
-                if event.key == K_r:
-                    pass
+                if event.key == K_w:    #5秒間プログラムを止めるぞい
+                    pygame.time.wait(5000)
+
+            #１秒毎に
+            if event.type == USEREVENT:
+                #タイマー減らす
+                timer -= 1
+                chara.MyCost += 3
+                chara.MakeEnemy(imgList).changeStat(chara.alive)
+                if timer <= 30:
+                    chara.MakeEnemy(imgList).changeStat(chara.alive)
+                if timer <= 10:
+                    chara.MakeEnemy(imgList).changeStat(chara.alive)
+
 
             #クリックイベント
             if event.type == MOUSEBUTTONDOWN:
                 mousePoint = pygame.mouse.get_pos()
                 (mouseX, mouseY) = mousePoint
-                print(mousePoint)
-                if 550 <= mouseY and mouseY < 649:
-                    print('lane0')
+                if 550 <= mouseY and mouseY < 649 and chara.MyCost >= costList[Displays.nowPressed]:
                     chara.MakeFriend(0, imgList).changeStat(chara.alive)
-                elif 649 <= mouseY and mouseY < 748:
-                    print('lane1')
+                elif 649 <= mouseY and mouseY < 748 and chara.MyCost >= costList[Displays.nowPressed]:
                     chara.MakeFriend(1, imgList).changeStat(chara.alive)
-                elif 748 <= mouseY and mouseY < 847:
-                    print('lane2')
+                elif 748 <= mouseY and mouseY < 847 and chara.MyCost >= costList[Displays.nowPressed]:
                     chara.MakeFriend(2, imgList).changeStat(chara.alive)
-                elif 847 <= mouseY and mouseY < 946:
-                    print('lane3')
+                elif 847 <= mouseY and mouseY < 946 and chara.MyCost >= costList[Displays.nowPressed]:
                     chara.MakeFriend(3, imgList).changeStat(chara.alive)
-                elif 946 <= mouseY and mouseY < 1045:
-                    print('lane4')
+                elif 946 <= mouseY and mouseY < 1045 and chara.MyCost >= costList[Displays.nowPressed]:
                     chara.MakeFriend(4, imgList).changeStat(chara.alive)
 
                 if Displays.csButton.rect.collidepoint(mousePoint):
