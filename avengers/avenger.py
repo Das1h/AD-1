@@ -17,7 +17,28 @@ def main():
 
     #FPS設定用のなんか
     clock = pygame.time.Clock()
-     
+
+    #キャラ画像一蘭
+    imgList = { "cs":pygame.image.load('./chara/cs.png').convert_alpha(),
+                "cs_battle":pygame.image.load('./chara/cs_battle.png').convert_alpha(),
+                "bi":pygame.image.load('./chara/bi.png').convert_alpha(),
+                "bi_battle":pygame.image.load('./chara/bi_battle.png').convert_alpha(),
+                "ia":pygame.image.load('./chara/ia.png').convert_alpha(),
+                "ia_battle":pygame.image.load('./chara/ia_battle.png').convert_alpha(),
+                "ako3":pygame.image.load('./chara/ako3.png').convert_alpha(),
+                "ako3_battle":pygame.image.load('./chara/ako3_battle.png').convert_alpha(),
+                "fkt3":pygame.image.load('./chara/fkt3.png').convert_alpha(),
+                "fkt3_battle":pygame.image.load('./chara/fkt3_battle.png').convert_alpha(),
+                "som3":pygame.image.load('./chara/som3.png').convert_alpha(),
+                "som3_battle":pygame.image.load('./chara/som3_battle.png').convert_alpha()}
+    
+    #拠点
+    baseImage = pygame.image.load('./img/base.png').convert_alpha()
+    baseRect = baseImage.get_rect(midright = (350, 680))
+    
+    #HP
+    hpImage = pygame.image.load("./img/hitpoint.png").convert()
+    hitpoint = Displays.HPbar(hpImage)
 
     while (1):
         clock.tick(60)      #FPS
@@ -33,11 +54,18 @@ def main():
             lineY = 550 + 99 * i
             pygame.draw.polygon(screen, lineColor, [[lineX, lineY], [1930, lineY]], 3)
 
+        #ベース表示
+        screen.blit(baseImage, baseRect)
+
         #キャラ表示
         chara.spriteGroup.update(screen)
 
         #ボタン表示
         Displays.displayAllButtons(screen)
+
+        #HP表示
+        hpImage = pygame.transform.smoothscale(hpImage, (chara.MyBase.hitpoint * 10, 50))
+        screen.blit(hpImage, hitpoint.rect)
 
         #イベント処理
         for event in pygame.event.get():
@@ -52,7 +80,7 @@ def main():
                     pygame.quit()
                     sys.exit()
                 if event.key == K_e:
-                    chara.MakeEnemy().changeStat(chara.alive)
+                    chara.MakeEnemy(imgList).changeStat(chara.alive)
                 if event.key == K_r:
                     pass
 
@@ -63,19 +91,19 @@ def main():
                 print(mousePoint)
                 if 550 <= mouseY and mouseY < 649:
                     print('lane0')
-                    chara.MakeFriend(0).changeStat(chara.alive)
+                    chara.MakeFriend(0, imgList).changeStat(chara.alive)
                 elif 649 <= mouseY and mouseY < 748:
                     print('lane1')
-                    chara.MakeFriend(1).changeStat(chara.alive)
+                    chara.MakeFriend(1, imgList).changeStat(chara.alive)
                 elif 748 <= mouseY and mouseY < 847:
                     print('lane2')
-                    chara.MakeFriend(2).changeStat(chara.alive)
+                    chara.MakeFriend(2, imgList).changeStat(chara.alive)
                 elif 847 <= mouseY and mouseY < 946:
                     print('lane3')
-                    chara.MakeFriend(3).changeStat(chara.alive)
+                    chara.MakeFriend(3, imgList).changeStat(chara.alive)
                 elif 946 <= mouseY and mouseY < 1045:
                     print('lane4')
-                    chara.MakeFriend(4).changeStat(chara.alive)
+                    chara.MakeFriend(4, imgList).changeStat(chara.alive)
 
                 if Displays.csButton.rect.collidepoint(mousePoint):
                     if Displays.nowPressed == 'cs':
