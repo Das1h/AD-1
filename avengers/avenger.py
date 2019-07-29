@@ -40,6 +40,10 @@ def main():
     hpImage = pygame.image.load("./img/hitpoint.png").convert()
     hitpoint = Displays.HPbar(hpImage)
 
+    #タイマー
+    sysfont = pygame.font.SysFont(None, 70)
+    timeLimit = 121
+
     while (1):
         clock.tick(60)      #FPS
         pygame.display.update()             # 画面更新
@@ -66,6 +70,16 @@ def main():
         #HP表示
         hpImage = pygame.transform.smoothscale(hpImage, (chara.MyBase.hitpoint * 10, 50))
         screen.blit(hpImage, hitpoint.rect)
+
+        #タイマー表示
+        timer = timeLimit - int(pygame.time.get_ticks() / 1000)
+        timerText = sysfont.render('Timelimit: ' + str(timer) + 'sec.', True, (255,255,255), (0,0,0))
+        timerRect = timerText.get_rect(topleft = (50, 200))
+        screen.blit(timerText, timerRect)
+        if timer == 0:
+            print('GAME CLEAR')
+            pygame.quit()
+            sys.exit()
 
         #イベント処理
         for event in pygame.event.get():

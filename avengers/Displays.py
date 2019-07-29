@@ -20,6 +20,11 @@ class Button:
             self.img = pygame.image.load("./img/" + self.buttonType + "Button.png")
             self.isPressed = False
 
+class HPbar(pygame.sprite.Sprite):
+    def __init__(self, image):
+        super().__init__()
+        self.img = image
+        self.rect = image.get_rect(topleft = (400, 100))
 
 csButton = Button(cs, (50,100))
 biButton = Button(bi, (150,100))
