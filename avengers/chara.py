@@ -213,6 +213,6 @@ def MakeEnemy(imageList):
 #拠点色々
 class Base():
     def __init__(self):
-        self.hitpoint = 100
+        self.hitpoint = 50
 
 MyBase = Base()

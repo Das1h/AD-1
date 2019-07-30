@@ -1,14 +1,20 @@
 import pygame
 from pygame.locals import *
 import sys
+import random
 
 import chara
 import Displays
+import python_client as client
+
+def getScore():
+    score = chara.MyCost *  chara.MyBase.hitpoint
+    return score
 
 def main():
     (width, height) = (1920, 1080)   # 画面サイズ
     pygame.init()       # pygame初期化
-    pygame.display.set_mode((width, height), 0)  # 画面設定
+    pygame.display.set_mode((width, height),  0)  # 画面設定
     screen = pygame.display.get_surface()
     
     # 背景の取得
@@ -47,7 +53,7 @@ def main():
     sysfont = pygame.font.SysFont(None, 70)
 
     #タイマー
-    timer = 60
+    timer = 1
 
     #1000ms毎にイベント
     pygame.time.set_timer(USEREVENT, 1000)
@@ -83,10 +89,9 @@ def main():
         timerText = sysfont.render('Timelimit: ' + str(timer) + 'sec.', True, (255,255,255), (0,0,0))
         timerRect = timerText.get_rect(topleft = (50, 200))
         screen.blit(timerText, timerRect)
-        if timer == 0:
+        if timer <= 0:
             print('GAME CLEAR')
-            pygame.quit()
-            sys.exit()
+            break
 
         #コスト表示
         costText = sysfont.render('COST: ' + str(chara.MyCost), True, (255,255,255), (0,0,0))
@@ -114,7 +119,7 @@ def main():
             if event.type == USEREVENT:
                 #タイマー減らす
                 timer -= 1
-                chara.MyCost += 3
+                chara.MyCost += random.randint(2,3)
                 chara.MakeEnemy(imgList).changeStat(chara.alive)
                 if timer <= 30:
                     chara.MakeEnemy(imgList).changeStat(chara.alive)
@@ -172,7 +177,43 @@ def main():
                         Displays.iaButton.press()
                         Displays.biButton.press()
                         Displays.nowPressed = 'ia'
+    
+    client.dbc.request('insert Score ' + str(getScore()).zfill(6))
 
+    ranking_max_view_count = 10
+    ranking_text_idx = 0
+    ranking_text_height = 100
+    rankingTexts = []
+    rankingRects = []
+    texts = client.dbc.request('get_all value 0').split("\n")[-ranking_max_view_count:][::-1]
+    for text in texts:
+        rankingText = sysfont.render(text, True, (255,255,255), (0,0,0))
+        rankingTexts.append(rankingText)
+        rankingRects.append(rankingText.get_rect(center = (960, 100 + ranking_text_idx * ranking_text_height)))
+        ranking_text_idx = ranking_text_idx + 1
+    
+    client.dbc.disconnect()
+
+    while(1):
+        clock.tick(60)
+        pygame.display.update()             # 画面更新
+        screen.fill((0, 0, 0))          # 画面の背景色
+
+        for i in range(ranking_text_idx):
+            screen.blit(rankingTexts[i], rankingRects[i])
+
+        for event in pygame.event.get():
+            # 閉じるボタンが押されたとき
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # キーを押したとき
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:   # Escキーが押されたとき
+                    pygame.quit()
+                    sys.exit()
+        
 
 if __name__ == "__main__":
     main()
