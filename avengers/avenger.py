@@ -53,7 +53,7 @@ def main():
     sysfont = pygame.font.SysFont(None, 70)
 
     #タイマー
-    timer = 1
+    timer = 60
 
     #1000ms毎にイベント
     pygame.time.set_timer(USEREVENT, 1000)
